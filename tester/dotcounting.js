@@ -139,7 +139,7 @@ function setServerMessageToDisplay()
 {
 	var choice = document.getElementById('answerChoice').value;
 	playerChoice.push(choice);
-	var messageHTML = "<table class='table-condensed'>";
+	var messageHTML = "<p> To be sent to server </p><table class='table-condensed'>";
 	messageHTML += "<tr><td>Trial Number</td><td>Circles on left</td><td>Player's choice</td></tr>";
 	for(var i = 0; i <= trialNumber; i++)
 	{
