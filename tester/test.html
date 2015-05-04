@@ -1,0 +1,43 @@
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title> Choose Your Action</title>
+    <link rel='stylesheet' href='../public/stylesheets/bootstrap.min.css' />
+    <script src='./dotcounting.js'></script>
+  </head>
+
+  <body onunload="">
+    <p style="display:none" id="hiitNumber"><%= hiitNumber %></p>
+    <div class='container' id='wholePage'>
+<div class='col-md-1'></div>
+<div class='col-md-6'>
+    <div class='row alert alert-warning' id='topmost'>
+      Dot counting game: Which side of the rectangle has more dots in it.
+  </div>
+<div class="row" id='rectanglePage'>
+<h4 class='alert  col-centered' id='rectangleHead'>Rectangle <span id='rectangleNumber'>1</span>:
+</h4>
+<div id='rectangle'>
+ <script type="text/javascript">
+getCanvasAnddrawDiagonal();
+createDotCounter(randomNumberOfCirclesOnLeft[trialNumber], numberOfCircles);
+ </script>
+</div>
+
+ </div>
+
+<div class="row alert alert-warning" id='answers'>
+
+ </div>
+
+  </div>
+
+  <div class='col-md-5' id='results'>
+  	Results goes here
+  </div>
+    <div class='col-md-1'>
+  </div>
+</div>
+
+  </body>
+</html>

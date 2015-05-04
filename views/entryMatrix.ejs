@@ -1,0 +1,48 @@
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title> Choose Your Action</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript">
+    var timeGivenForMatrix = parseInt("<%- timeGivenForMatrix %>");
+    var numberOfMatrices = parseInt("<%- numberOfMatrices %>");
+    </script>
+    <script src='/javascripts/matrix.js'></script>
+  </head>
+
+  <body onunload="">
+    <p style="display:none" id="hiitNumber"><%= hiitNumber %></p>
+    <div class='container' id='wholePage'>
+<div class='col-md-1'></div>
+<div class='col-md-10'>
+    <div class='row alert alert-warning' id='topmost'>
+      Matrix game : Find two numbers that add up to <b>10</b> in the matrix below.
+</div>
+<div class="row" id='article'>
+<h4 class='alert  col-centered' id='matrixHead'>Matrix <span id='matrixNumber'>1</span>:
+</h4>
+<div id='matrix'>
+<script type="text/javascript">
+document.getElementById("matrix").innerHTML = setMatrixWithNumber(1);
+</script>
+</div>
+
+ </div>
+
+<div class="row alert alert-warning" id='answers'>
+
+
+ </div>
+
+<div class="row alert alert-warning" id='mainTimerDiv'>
+      
+  </div>
+
+  </div>
+    <div class='col-md-1'>
+  </div>
+</div>
+
+  </body>
+</html>

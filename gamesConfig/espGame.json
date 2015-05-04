@@ -1,0 +1,17 @@
+{
+  "leastNumberOfRounds": 2,
+  "variableAdditionOfRounds": 2,
+  "phasesDuration" : [5, 15, 5],
+  "countBeginning": 30,
+  "minTimeMins": 25,
+  "maxTimeMins": 30,
+  "currency": "$",
+  "reward": 0.50,
+  "maxbonus": 2.0,
+  "numPlayers": 2,
+  "title": "Experiment",
+  "tutorialPage" : "tutorialEsp",
+  "entryPage" : "entryEsp",
+  "socketConnectAddress" : "http://localhost:4000",
+  "socketIOAddress" : "http://localhost:4000/socket.io/socket.io.js"
+}

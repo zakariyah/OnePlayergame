@@ -1,0 +1,19 @@
+{
+  "leastNumberOfRounds": 1,
+  "variableAdditionOfRounds": 0,
+  "timeForChoices": 12,
+  "minTimeMins": 25,
+  "maxTimeMins": 30,
+  "currency": "$",
+  "reward": 0.50,
+  "maxbonus": 2.0,
+  "timeGivenForMatrix": 3,
+  "numberOfMatrices":4,
+  "numberOfAnswers":1,
+  "pageUrl": "matrixGame",
+  "title": "Experiment",
+  "tutorialPage" : "tutorialMatrix",
+  "entryPage" : "entryMatrix",
+  "socketAddress" : "http://localhost:4000",
+  "socketIOAddress" : "http://localhost:4000/socket.io/socket.io.js"
+}

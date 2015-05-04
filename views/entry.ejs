@@ -1,0 +1,167 @@
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title> Choose Your Action</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src='/javascripts/postquiz.js'></script>
+    <script src='/javascripts/pdView.js'></script>
+    <script type="text/javascript">
+     function playSound(){   
+                document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/audio.notification.mp3" type="audio/mpeg" /><source src="/audio.notification.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="/audio.notification.mp3" /></audio>';
+            }
+      </script>
+  </head>
+
+  <body onunload="">
+    <script src="<%- socketIOAddress %>"></script>
+    <p style="display:none" id="hiitNumber"><%= hiitNumber %></p>
+<script type="text/javascript">
+window.onbeforeunload = function() {
+        return "Please do not leave this page except through the 'Go to payment' button.";
+    }
+var timeOfAction = -1;
+
+
+
+function endGame()
+{
+        var htmlString = "<div class=\"alert alert-warning\"> Thank you very much, The game is over. </div>";
+        htmlString += "<div class=\"alert alert-warning\"> Please fill in the survey below </div>";
+
+        htmlString += postQuizQuestions();
+
+        var wholePageElement = document.getElementById('wholePage');
+        wholePageElement.innerHTML = htmlString;
+        // goToURL("./postquizsurvey");
+}
+
+function setTopmostDiv(content)
+{
+  var topmostDiv = document.getElementById('topmost'); // topmost div
+  topmostDiv.innerHTML = "Round " + (parseInt(content.round) + 1);
+}
+
+function setArticleDiv(content)
+{
+  var articleDiv = document.getElementById('article'); // article div
+  var pageUrl = content.pageUrl;
+  var url = "asset/onePlayer/" + pageUrl + ".html";
+  var toInsert = "<object type=\"text/html\" data=\"" + url + "\"></object>";
+  articleDiv.innerHTML = toInsert;
+}
+
+function setTimerDiv(content)
+{
+  document.getElementById("mainTimerDiv").innerHTML = "<span style='border: 1px #bce8f1 solid;   line-height: 120%;   font-size: 36px;  text-align: center; background-color: #d9edf7;   margin: 5px;'><span id='timerDiv'>" + content.timeForChoices + " seconds  left ... </span> </span>"; 
+  
+}
+
+function setCountDownTimer(content)
+{
+  var mainCount = content.timeForChoices;
+  var count = content.timeForChoices;
+  var interval = 1000;
+  var before = new Date();  
+  var leftValue = 0;
+  var counter=setInterval(timer, 1000);
+  function timer()
+  {
+    // count = count - 1;
+    var now = new Date();
+    var elapsedTime = (now.getTime() - before.getTime());
+    elapsedTime = Math.floor(elapsedTime/interval); 
+    // leftValue += Math.floor(elapsedTime/interval);
+    count = mainCount - elapsedTime;
+    if (count < 0)
+    {
+      document.getElementById("timerDiv").innerHTML = "<span id='countRemain'>Next round starts soon......</span>"; // watch for spelling
+      clearInterval(counter);
+      chatRoom(content);
+      return;
+    }
+    if(count == 3)
+    {
+      document.getElementById("answers").innerHTML = "<div class='alert'> Enter here <input type='number' id='toServer1'/></div>";
+    }
+  var toShow = "<span id='countRemain'>" + count + "</span> second";
+  if(!(count == 1 || count == 0))
+  {
+    toShow += "s";
+  }
+  toShow +=  " remaining...";
+  // alert(toShow);
+  document.getElementById("timerDiv").innerHTML = toShow; // watch for spelling
+  }
+}
+
+function gameHasNotEnded(content)
+{
+  return content.round < content.totalRounds;
+}
+
+// var socket = io.connect('http://ec2-54-191-154-185.us-west-2.compute.amazonaws.com:4000/');
+
+var socket = io.connect("<%- socketConnectAddress %>");
+socket.on('serverMessage', function(content) {
+    if(gameHasNotEnded(content))
+    {
+      setTopmostDiv(content);
+      setArticleDiv(content);
+      setTimerDiv(content);   
+      setCountDownTimer(content);
+    }
+    else
+    {
+      endGame();
+    }
+    });
+
+
+function chatRoom(content)
+{
+  var tobeSentToServer = {};
+  for(var i = 0; i < content.numberOfAnswers; i++)
+  {
+      var ind = "toServer" + (i + 1);
+      var val = document.getElementById(ind).value;
+      tobeSentToServer[ind] = val;
+  }
+
+  tobeSentToServer[timeOfAction] = 2; //fix it
+  socket.emit('clientMessage', tobeSentToServer);  
+  timeOfAction = -1; 
+
+  return true;
+}
+
+var hiitNumber = document.getElementById("hiitNumber").innerHTML;
+// for starting game
+socket.emit('join', hiitNumber);
+// for timer starting
+
+</script>
+    <div class='container' id='wholePage'>
+<div class='col-md-1'></div>
+<div class='col-md-10'>
+    <div class='row alert alert-warning' id='topmost'>
+</div>
+<div class="row alert alert-warning" id='article'>
+ </div>
+
+<div class="row alert alert-warning" id='answers'>
+
+
+ </div>
+
+<div class="row alert alert-warning" id='mainTimerDiv'>
+      
+  </div>
+
+  </div>
+    <div class='col-md-1'>
+  </div>
+</div>
+
+  </body>
+</html>

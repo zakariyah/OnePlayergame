@@ -1,0 +1,30 @@
+<html>
+  <head>
+  <meta http-equiv='Content-Type' content='text/html; charset=ISO-8859-1'>
+  <title><%= numbero %> Choose Your Action</title>
+    <link rel='stylesheet' href='../public/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='../public/stylesheets/style.css' />
+    <script src='../public/javascripts/postquiz.js'></script>
+  </head>
+  <body>
+<div id="postquiz">
+</div>
+
+<table class='table table-bordered table-condensed'><tr class="danger"><th>Option</th></tr><tr  class="danger"><td><input type="radio" name="choiceAction" id='first' onclick='return setTimeOfEvent()' value="1"> Yes: </td></tr><tr  class="danger"><td><input type="radio" name="choiceAction" id='second' onclick='return setTimeOfEvent()' value="2">  No: </td></tr></table>
+
+<div class='row alert'><div class='col-md-offset-3 col-md-6'><input type='range' id='slider' min='0.01' max='0.99' value='0.01' step='0.01'  onchange='showValue(this.value)' /><p><span id='sliderrange'>0.01</span></p></div></div>
+<div class='row' style='border: 1px #bce8f1 solid;   line-height: 120%;   font-size: 36px;  text-align: center; background-color: #d9edf7;   margin: 5px;'> <span id='timer'></span> </div>
+<div class='row progress'><div id='progressBarMain' class='progress-bar progress-bar-success progress-bar-striped active' role='progressbar' aria-valuenow='5' aria-valuemin='0' aria-valuemax='100' style='width: 5%;'></div></div>
+
+<div class='form-group'><label for='exampleInputEmail1' class='col-sm-6 control-label'> Which side had the higher number of circles:</label>
+<div class='col-sm-3'><select id='answerChoice' class='form-control' >
+<option value='left'>LEFT</option><option value='right'>RIGHT</option> </select>
+</div>
+</div>
+<div class='form-group'>
+<div class='col-md-offset-4 col-sm-4 '><input type='button' id='nextButton' value='NEXT' onClick='showNextTrial();' />
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+#### How to run an instance of the game ####
+
+ node bin/www.js gameType
+
+ ### gameType can be pd, esp or wordTwoPlayer
+ ### esp for ESP game 
+ ### pd for Iterated Prisoners Dilemma
+ ### wordTwoPlayer for Word Scrambling game
+
+ ### esp configuration is in espGame.json in the gamesConfig folder
+ ### pd configuration is in prisonersDilemma.json in the gamesConfig folder
+ ### word scrambking configuration is in wordTwoPlayer.json in the gamesConfig folder
+
+### On the browser, navigate to localhost:4000/information.
+
+### game properties are present in controller/gameProperties.js
+
+### Database: mongodb
+### database name: scailabexperiment
+
+
+Description of the game:
+A two player setup for three types of game: Iterated Prisoners Dilemma, ESP game, word scrambling.
+
+
+### if intended to run on a server, then socket must be gotten from the server.
+
+### To run on server, change the localhost in socketAddress and socketIOAdress to server address.
+
+### For word scrambler, words are in the gamesConfig/wordTwoPlayer.json file.

@@ -1,0 +1,216 @@
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title> Choose Your Action</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src='/javascripts/postquiz.js'></script>
+    <script src='/javascripts/wordView.js'></script>
+    <script type="text/javascript">
+     function playSound(){   
+                document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/audio.notification.mp3" type="audio/mpeg" /><source src="/audio.notification.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="/audio.notification.mp3" /></audio>';
+            }
+      </script>
+  </head>
+
+  <body onunload="">
+    <script src="<%- socketIOAddress %>"></script>
+    <p style="display:none" id="hiitNumber"><%= hiitNumber %></p>
+    <p style="display:none" id="countBeginning"><%= countBeginning %></p>
+<script type="text/javascript">
+window.onbeforeunload = function() {
+        return "Please do not leave this page except through the 'Go to payment' button. \n If not, you will be disqualified and will not be paid";
+    }
+var timeOfAction = -1;
+
+function setTimeOfEvent()
+{
+  timeOfAction = document.getElementById("countRemain").innerHTML;
+}
+
+function setTimer(phase1Duration)
+{
+  var mainCount = phase1Duration;
+  var count = phase1Duration;
+  var interval = 1000;
+  var before = new Date();
+  var leftValue = 0;
+  var counter=setInterval(timer, 1000);
+  function timer()
+  {
+    // count = count - 1;
+    var now = new Date();
+    var elapsedTime = (now.getTime() - before.getTime());
+    elapsedTime = Math.floor(elapsedTime/interval); 
+    // leftValue += Math.floor(elapsedTime/interval);
+    count = mainCount - elapsedTime;
+    if (count < 0)
+    {
+      document.getElementById("timer").innerHTML = "<span id='countRemain'>Please, we are still expecting the other player's choice......</span>"; // watch for spelling
+      chatRoom();
+      makeSelectionImpossible();
+      clearInterval(counter);
+      return;
+    }
+  document.getElementById("timer").innerHTML = "<span id='countRemain'>" + count + "</span> secs remaining..."; // watch for spelling
+    changeProgressBar('progressBarMain', count, phase1Duration);
+  }
+}
+
+
+var countBeginning = document.getElementById("countBeginning").innerHTML; //changed from previous
+
+function setTimerBeginning()
+{  
+var counter=setInterval(timer, 1000);
+function timer()
+  {
+    countBeginning = countBeginning - 1;
+    if (countBeginning < 0)
+    {
+      waitingRoomEnded();
+      clearInterval(counter);
+      return;
+    }
+  document.getElementById("timerBegin").innerHTML = countBeginning + " secs remaining"; // watch for spelling
+  }
+}
+
+function showGamePayoffMatrix(phase1Utilities)
+{
+    var htmlString = pdPhase1(phase1Utilities);
+    var actionElement = document.getElementById('actions');
+    actionElement.innerHTML = htmlString;    
+}
+
+function showPlayerChoicesForGivenTime(content)
+{
+  var timeForChoices = content.phase2Duration;
+  var counter=setInterval(timer, 1000);
+  function timer()
+  {
+    timeForChoices = timeForChoices - 1;
+    if (timeForChoices < 0)
+    {
+      setTimer(content.phase1Duration);
+      showGamePayoffMatrix(content.phase1Utilities);
+      clearInterval(counter);
+      return;
+    }
+  document.getElementById("nextRoundCounter").innerHTML = "<span style='border: 1px #bce8f1 solid;   line-height: 120%;   font-size: 36px;  text-align: center; background-color: #d9edf7;   margin: 5px;'>Next round starts in " +  timeForChoices + " seconds ... </span>"; 
+  changeProgressBar('progressBar', timeForChoices, content.phase2Duration);
+  }
+}
+
+function endGame(cummulativeScore, numberOfRounds)
+{
+        var htmlString = "<div class=\"alert alert-warning\"> Thank you very much, The game is over. You had a total of " + cummulativeScore  +" points</div>";
+        htmlString += "<div class=\"alert alert-warning\"> Please fill in the survey below </div>";
+        var heHadRecommenders = 0;
+        htmlString += postQuizQuestions(heHadRecommenders, cummulativeScore, numberOfRounds);
+
+        var actionsElement = document.getElementById('actions');
+        actionsElement.innerHTML = htmlString;
+        // goToURL("./postquizsurvey");
+        document.getElementById('recommender').innerHTML = '';
+}
+
+
+// var socket = io.connect('http://ec2-54-191-154-185.us-west-2.compute.amazonaws.com:4000/');
+
+var socket = io.connect("<%- socketConnectAddress %>");
+    // var socketid = socket.id;
+socket.on('serverMessage', function(content) {
+    // var options = content.options; // ['A', 'B'];
+
+    var defectElement = document.getElementById('actions'); // block actions for some time
+    defectElement.innerHTML = pdPhase2(content.phase2Utilities); // text of second phase
+  
+    var numberOfRounds = content.rounds;
+
+    if(content.count == 0)
+    {// first round
+      setTimer(content.phase1Duration);
+      playSound();
+    }
+    else if(content.count < numberOfRounds)
+    {// subsequent rounds
+      showPlayerChoicesForGivenTime(content);
+    }
+    else
+    {// final rounds
+      var cummulative = content.cumm;
+      endGame(cummulative, numberOfRounds);
+    }
+});
+
+
+socket.on('start', function(phase1Utilities) {
+   showGamePayoffMatrix(phase1Utilities);
+    countBeginning = 0;
+ 
+});
+
+socket.on('disconnectMessage', function(content) {
+  endGame(cummulative, content.cumm, content.rounds);
+
+});
+
+
+function waitingRoomEnded()
+{
+  socket.emit('waitingTimeElapsed');  
+}
+
+function chatRoom()
+{
+  var val = -1;
+  var numberOfScrambledWordsValue = document.getElementById('numberOfScrambledWords').value;
+  if(numberOfScrambledWordsValue != "")
+  {
+    val = numberOfScrambledWordsValue;
+  }
+  socket.emit('clientMessage', {'gamePlay' : val, 'timeOfAction' : timeOfAction});  
+  timeOfAction = -1; 
+
+  return true;
+}
+
+var hiitNumber = document.getElementById("hiitNumber").innerHTML;
+// for starting game
+socket.emit('join', hiitNumber);
+setTimerBeginning();
+// for timer starting
+
+</script>
+    <div class='container'>
+<div class='col-md-1'></div>
+<div class='col-md-10'>
+    <div class='row' id='actions'>
+      <p>Welcome</p>
+      <div class="alert alert-warning"> Please wait for the other participant <span id='timerBegin'></span></div>
+</div>
+<div class="row alert alert-warning" id='recommender'>
+      
+  </div>
+  </div>
+    <div class='col-md-1'>
+      <div class="row" id='voice'>
+    
+  </div>
+  
+  <div class="row">
+    <div id='disconnect'>
+      
+    </div>
+  </div>
+  </div>
+</div>
+<div>
+<span style='display:none' id='hehasrecommender'>0</span>
+  </div>
+
+<div id="sound"></div>
+
+  </body>
+</html>

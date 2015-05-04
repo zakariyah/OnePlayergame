@@ -1,0 +1,47 @@
+
+<div id='alert'>Find two numbers that add up to ten in the matrix below.</div>
+<div id='alert'>Matrix <span id='matrixNumber'>1</span>
+</div>
+<div id='matrix'>
+
+</div>
+
+<script type="text/javascript">
+var timeGivenForMatrix = 2 * 1000;
+var numberOfMatrices = 4;
+function createMatrixHtml(matrixValuesInt)
+{
+	var row = 4;
+	var column = 3;
+	var matrixToSend = "<table class='table'>";
+	for(var i = 0; i < column; i++)
+	{
+		matrixToSend += "<tr>";
+		for(var j = 0; j < row; j++)
+		{
+			matrixToSend += "<td>" + matrixValuesInt[ i * row + j] + "</td>";
+		}
+		matrixToSend += "</tr>";
+	}
+		matrixToSend += "</table>";
+		// alert(matrixToSend);
+	return matrixToSend;
+}
+function setMatrixWithNumber(matrixId)
+{
+	var matrixValues = [[1, 2, 3, 4, 5, 6, 7,8, 9, 10, 11, 12], [1, 12, 3, 4, 5, 6, 7,8, 9, 10, 11, 2], [11, 2, 3, 4, 5, 6, 7,8, 9, 10, 1, 12], [1, 2, 3, 5, 4, 8, 7,6, 9, 10, 11, 12]];
+	if(matrixValues.length < matrixId)
+	{
+		clearInterval(intervalVar);
+		return "Please state the number you were able to solve in the box below";
+	}
+	return createMatrixHtml(matrixValues[matrixId - 1]);
+}
+var intervalVar = setInterval(function(){ 
+var matrixNumber = parseInt(document.getElementById("matrixNumber").innerHTML) + 1;	
+document.getElementById("matrix").innerHTML = setMatrixWithNumber(matrixNumber);
+document.getElementById("matrixNumber").innerHTML = matrixNumber;
+ }, timeGivenForMatrix);
+document.getElementById("matrix").innerHTML = setMatrixWithNumber(1);
+
+</script>
